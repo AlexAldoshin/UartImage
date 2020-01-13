@@ -46,7 +46,6 @@
             this.textBoxY = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.button2 = new System.Windows.Forms.Button();
-            this.textBoxDebug = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -194,22 +193,11 @@
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
-            // textBoxDebug
-            // 
-            this.textBoxDebug.Location = new System.Drawing.Point(660, 167);
-            this.textBoxDebug.MaxLength = 100000;
-            this.textBoxDebug.Multiline = true;
-            this.textBoxDebug.Name = "textBoxDebug";
-            this.textBoxDebug.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.textBoxDebug.Size = new System.Drawing.Size(127, 257);
-            this.textBoxDebug.TabIndex = 14;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 530);
-            this.Controls.Add(this.textBoxDebug);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.textBoxY);
@@ -254,7 +242,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelError;
-        private System.Windows.Forms.TextBox textBoxDebug;
     }
 }
 

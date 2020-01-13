@@ -89,7 +89,7 @@ namespace UartImage
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            textBoxDebug.AppendText("Line " + lineNum.ToString() + " Size " + LineData.Count + "\r\n");
+           
 
             if (serialPort1.IsOpen)
             {
@@ -111,30 +111,37 @@ namespace UartImage
 
         private void SerialPort1_DataReceived(object sender, System.IO.Ports.SerialDataReceivedEventArgs e)
         {
-            while (serialPort1.BytesToRead>0)
+            try
             {
-                byte indata = (byte)serialPort1.ReadByte();
-                ReciveBytes++;                        
+                while (serialPort1.BytesToRead > 0)
+                {
+                    byte indata = (byte)serialPort1.ReadByte();
+                    ReciveBytes++;
 
-                if (indata == 0 && ReciveBytes > 4)
-                {
-                    ReciveAllBytes += ReciveBytes;
-                    UpdateIMG();
-                    ReciveBytes = 0;
-                    LineData = new List<byte>();
+                    if (indata == 0 && ReciveBytes > 4)
+                    {
+                        ReciveAllBytes += ReciveBytes;
+                        UpdateIMG();
+                        ReciveBytes = 0;
+                        LineData = new List<byte>();
+                    }
+                    if (ReciveBytes == 1)
+                    {
+                        lineNum = indata;
+                    }
+                    if (ReciveBytes == 2)
+                    {
+                        lineNum = lineNum * 256 + indata;
+                    }
+                    if (ReciveBytes > 2)
+                    {
+                        LineData.Add(indata);
+                    }
                 }
-                if (ReciveBytes == 1)
-                {
-                    lineNum = indata;
-                }
-                if (ReciveBytes == 2)
-                {
-                    lineNum = lineNum * 256 + indata;
-                }
-                if (ReciveBytes > 2)
-                {
-                    LineData.Add(indata);
-                }
+            }
+            catch (Exception)
+            {
+
             }
         }
 
@@ -142,13 +149,13 @@ namespace UartImage
         {
             try
             {
-                if (lastLineNum>lineNum)
-                {
-                    pictureBox1.Image = (Image)bmp;
-                }
+                //if (lastLineNum>lineNum)
+                //{
+                //    pictureBox1.Image = (Image)bmp;
+                //}
                 lastLineNum = lineNum;
                 toolStripStatusLabelError.Text = "Получено " + ReciveAllBytes.ToString() + " байт";
-                textBoxDebug.AppendText("Line " + lineNum.ToString() + " Size " + LineData.Count + "\r\n");
+                
                 if (lineNum < bmp.Height)
                 {
                     int px = 0;
@@ -163,10 +170,11 @@ namespace UartImage
                     }
                     
                 }
+                pictureBox1.Image = (Image)bmp;
             }
             catch (Exception)
             {
-                toolStripStatusLabelError.Text= "Ошибка в функции UpdateIMG";
+                toolStripStatusLabelError.Text = "Ошибка в функции UpdateIMG";
             }
         }
 

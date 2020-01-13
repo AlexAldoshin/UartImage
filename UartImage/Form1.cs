@@ -67,7 +67,12 @@ namespace UartImage
                     serialPort1.Open();
                 }
                 TestPort();
-            }
+
+                ReciveBytes = 0;
+                ReciveAllBytes = 0;
+                StartTime = DateTime.Now;
+
+    }
             else
             {
                 MessageBox.Show("Выберите порт","Ahtung!");
@@ -98,6 +103,7 @@ namespace UartImage
             TestPort();
         }
 
+        DateTime StartTime;
         private bool newLine = false;
         private int lineNum = 0;
         private int lastLineNum = 0;
@@ -113,9 +119,12 @@ namespace UartImage
         {
             try
             {
-                while (serialPort1.BytesToRead > 0)
+                int count = serialPort1.BytesToRead;
+                byte[] data = new byte[count];
+                serialPort1.Read(data, 0, data.Length);
+
+                foreach (var indata in data)
                 {
-                    byte indata = (byte)serialPort1.ReadByte();
                     ReciveBytes++;
 
                     if (indata == 0 && ReciveBytes > 4)
@@ -149,12 +158,18 @@ namespace UartImage
         {
             try
             {
-                //if (lastLineNum>lineNum)
-                //{
-                //    pictureBox1.Image = (Image)bmp;
-                //}
+                if (lastLineNum > lineNum)
+                {
+                    
+                    pictureBox1.Image = (Image)bmp;
+
+                    var dT = DateTime.Now - StartTime;
+                    var dTsec = dT.TotalMilliseconds;
+                    var dSpeed = Math.Round(1000 * ReciveAllBytes / dTsec);
+                    toolStripStatusLabelError.Text = "Получено " + ReciveAllBytes.ToString() + " байт. Скорость " + dSpeed.ToString() + " байт/сек";
+                }
                 lastLineNum = lineNum;
-                toolStripStatusLabelError.Text = "Получено " + ReciveAllBytes.ToString() + " байт";
+               
                 
                 if (lineNum < bmp.Height)
                 {
@@ -170,7 +185,7 @@ namespace UartImage
                     }
                     
                 }
-                pictureBox1.Image = (Image)bmp;
+               // pictureBox1.Image = (Image)bmp;
             }
             catch (Exception)
             {

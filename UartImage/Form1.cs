@@ -23,7 +23,7 @@ namespace UartImage
             PortsRefresh();
             int x = int.Parse(textBoxX.Text);
             int y = int.Parse(textBoxY.Text);
-            bmp =new Bitmap(x,y);
+            bmp = new Bitmap(x, y);
 
         }
 
@@ -46,7 +46,7 @@ namespace UartImage
         {
             var port = comboBox1.Text;
 
-            if (port.Length>3)
+            if (port.Length > 3)
             {
                 var BaudRate = int.Parse(textBoxBaudRate.Text);
 
@@ -72,12 +72,12 @@ namespace UartImage
                 ReciveAllBytes = 0;
                 StartTime = DateTime.Now;
 
-    }
+            }
             else
             {
-                MessageBox.Show("Выберите порт","Ahtung!");
+                MessageBox.Show("Выберите порт", "Ahtung!");
             }
-            
+
         }
 
         private void TestPort()
@@ -94,7 +94,7 @@ namespace UartImage
 
         private void Button1_Click(object sender, EventArgs e)
         {
-           
+
 
             if (serialPort1.IsOpen)
             {
@@ -108,7 +108,7 @@ namespace UartImage
         private int lineNum = 0;
         private int lastLineNum = 0;
 
-        List<byte> LineData=new List<byte>();
+        List<byte> LineData = new List<byte>();
         private int ReciveBytes = 0;
         private int ReciveAllBytes = 0;
         private Bitmap bmp;
@@ -143,8 +143,14 @@ namespace UartImage
                         lineNum = lineNum * 256 + indata;
                     }
                     if (ReciveBytes > 2)
-                    {
-                        LineData.Add(indata);
+                    {                       
+                        var colb = indata % 8;
+                        byte valb = (byte)(indata - colb);
+                        for (int i = 0; i < colb; i++)
+                        {
+                            LineData.Add(valb);
+                        }
+                       
                     }
                 }
             }
@@ -160,7 +166,7 @@ namespace UartImage
             {
                 if (lastLineNum > lineNum)
                 {
-                    
+
                     pictureBox1.Image = (Image)bmp;
 
                     var dT = DateTime.Now - StartTime;
@@ -169,8 +175,8 @@ namespace UartImage
                     toolStripStatusLabelError.Text = "Получено " + ReciveAllBytes.ToString() + " байт. Скорость " + dSpeed.ToString() + " байт/сек";
                 }
                 lastLineNum = lineNum;
-               
-                
+
+
                 if (lineNum < bmp.Height)
                 {
                     int px = 0;
@@ -178,14 +184,21 @@ namespace UartImage
                     {
                         if (px < bmp.Width)
                         {
-                            var col = Color.FromArgb(color_val, color_val, color_val);
+                            byte b2 = (byte)(color_val % 16);
+                            byte b1 = (byte)(color_val - b2);
+                            var col = Color.FromArgb(b1, b1, b1);
                             bmp.SetPixel(px, lineNum, col);
                             px++;
+                            if (px < bmp.Width)
+                            {
+                                col = Color.FromArgb(b2, b2, b2);
+                                bmp.SetPixel(px, lineNum, col);
+                                px++;
+                            }
                         }
                     }
-                    
                 }
-               // pictureBox1.Image = (Image)bmp;
+                // pictureBox1.Image = (Image)bmp;
             }
             catch (Exception)
             {
